@@ -8,6 +8,7 @@ FASTLED_USING_NAMESPACE
 #define COLOR_ORDER GRB
 #define NUM_LEDS    150
 #define FRAMES_PER_SECOND  120
+#define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 int RestfadeAmount = 3; 
 int Restbrightness = 0; 
@@ -18,6 +19,12 @@ int Hypbrightness = 0;
 CRGB leds[NUM_LEDS];
 CRGB partLeds[NUM_LEDS];
 uint8_t paletteIndex = 0;
+
+typedef void (*SimplePatternList[])();
+
+uint8_t gCurrentPatternNumber = 0;
+
+
 char command;
 boolean newData = false;
 
@@ -227,7 +234,7 @@ CRGBPalette16 repolarPal = CRGBPalette16 (
         CRGB::White  
   );
 
- int period =  10000;  
+  
  
 
 void setup() {
@@ -239,9 +246,7 @@ void setup() {
 
 }
 
-typedef void (*SimplePatternList[])();
 SimplePatternList gPatterns = { restingState,earlyDepolarization,lateDepolarization, repolarization, hyperpolarization};
-uint8_t gCurrentPatternNumber = 0;
 
 void loop() {
   recieveChar(); 
@@ -264,47 +269,100 @@ void recieveChar(){
 void commandLight(){
   if(newData == true){
 
-    if (command == 'A') { 
-        for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){  
-         lightShowStrip();
-        }
-      }else
-       if(command == 'R'){
-       for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){  
-          restingState();
+    if (command == 'A') { //auto for 40 seconds 
+      
+         lightShowStrip(40);
+        
+       }else if(command == 'B'){ //resting state for 10 seconds
+      
+         restingForN(10);
               
-       }  
-      } else if(command == 'E'){
-           for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
-             earlyDepolarization();
-           }
-      } else if(command == 'L'){
-         for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){  
-             lateDepolarization();
-         }      
-        }else if(command == 'H'){
-          for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
-             hyperpolarization();
-          }
+       }else if(command == 'C'){ //resting for 30 seconds
+          
+           restingForN(30);
+           
+       }else if(command == 'D'){ //resting for 1 min
+        
+              restingForN(60);
+           
+        }else if(command == 'E'){ //resting for 2 min
+          
+             restingForN(120);
                
+        } else if(command == 'F'){ //earlydepo for 10 seconds
             
-        } else if(command == 'P'){
-            for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
-             repolarization();
-            }
-        } 
+             earlyDepoForN(10);
+            
+        }else if(command == 'G'){ //earlydepo for 30 seconds 
+          
+             earlyDepoForN(30);
+             
+        }else if(command == 'H'){ //early depo for 1 min
+          
+            earlyDepoForN(60); 
+            
+        }else if(command =='I'){ //early depo for 2 min
+          
+            earlyDepoForN(120);
+            
+        }else if(command == 'J'){ //late depo for 10 seconds
+
+            lateDepoForN(10); 
+            
+        }else if(command == 'K'){ //late depo for 30 seconds
+
+             lateDepoForN(30); 
+             
+        }else if(command == 'L'){ //late depo for 60 seconds 
+
+            lateDepoForN(60); 
+            
+        }else if(command == 'M'){ //late depo for 120 seconds 
+          
+          lateDepoForN(120);
+          
+        }else if(command == 'N'){ //repo for 10 seconds
+          
+          repoForN(10); 
+          
+        }else if(command == 'O'){ //repo for 30 seconds
+          
+          repoForN(30); 
+          
+        }else if(command == 'P'){ //repo for 60 seconds
+          
+          repoForN(60); 
+          
+        }else if(command == 'Q'){ //repo for 120 seconds 
+          
+          repoForN(120); 
+          
+        }else if(command == 'R'){ //hyper for 10 seconds
+          
+          hypForN(10);
+          
+        }else if(command == 'S'){ //hyper for 30 seconds 
+          
+          hypForN(30); 
+          
+        }else if(command == 'T'){ //hyper for 60 seconds 
+          
+          hypForN(60); 
+          
+        }else if(command == 'U'){ //hyper for 120 seconds
+          
+          hypForN(120); 
+          
+          }
     offStrip();
     newData = false; 
+    
     }
   
   }
-#define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
-void nextPattern()
-{
-  // add one to the current pattern number, and wrap around at the end
-  gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE( gPatterns);
-}
+
+
 
 
 
@@ -375,6 +433,9 @@ void hyperpolarizationStrip(){
   delay(4);
   
   }
+
+
+  
 void Particles(CRGBPalette16 pal1,CRGBPalette16 pal2){
    EVERY_N_MILLISECONDS(20) {
     //Switch on an LED at random, choosing a random color from the palette
@@ -393,49 +454,45 @@ void Particles(CRGBPalette16 pal1,CRGBPalette16 pal2){
   }
 
   void restingState(){
-
-
     restingStateStrip(); 
     Particles(restingPurpPal,restingGreenPal);
- 
     }
 
   void earlyDepolarization(){
-
     earlyDepoStrip();
     Particles(depoPurpPal,restingGreenPal);
-
- 
     }
   void lateDepolarization(){
-
     lateDepoStrip(); 
     Particles(depoPurpPal,restingGreenPal);
-  
- 
     }
-   void repolarization(){
-    
-  
 
+    
+   void repolarization(){
     repolarizationStrip(); 
     Particles(repolPurplePal,repolGreenPal);
- 
-    
     }
+
+    
     void hyperpolarization(){
-   
- 
      hyperpolarizationStrip(); 
      Particles(restingPurpPal,hypGreenPal);
- 
-     
       }
-     
-    void lightShowStrip(){
-       gPatterns[gCurrentPatternNumber]();
+
+     void nextPattern()
+{
+  // add one to the current pattern number, and wrap around at the end
+  gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE( gPatterns);
+}
+
+    void lightShowStrip(int n){
+      int period = n * 1000;
+     for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
+       gPatterns[ gCurrentPatternNumber]();
        FastLED.delay(1000/FRAMES_PER_SECOND);
        EVERY_N_SECONDS( 10 ) { nextPattern(); } 
+     }
+     gCurrentPatternNumber = 0; 
       }
 
       void offStrip(){
@@ -443,6 +500,42 @@ void Particles(CRGBPalette16 pal1,CRGBPalette16 pal2){
             fill_solid(partLeds, NUM_LEDS, CRGB::Black);
             FastLED.show();
   }
+
+  
+  void restingForN(int n){
+    int period = n * 1000;
+     for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
+        restingState();
+      }
+    }
+  void earlyDepoForN(int n){
+    int period = n * 1000;
+     for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
+        earlyDepolarization();
+      }
+    }
+    void lateDepoForN(int n){
+    int period = n * 1000;
+     for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
+        lateDepolarization();
+      }
+    }
+
+     void repoForN(int n){
+    int period = n * 1000;
+     for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
+        repolarization();
+      }
+    }
+     void hypForN(int n){
+    int period = n * 1000;
+     for( uint32_t tStart = millis();  (millis()-tStart) < period;  ){
+        hyperpolarization();
+      }
+    }
+    
+
+  
     
 
   
