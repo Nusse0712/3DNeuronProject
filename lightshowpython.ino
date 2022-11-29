@@ -279,15 +279,15 @@ void commandLight(){
               
        }else if(command == 'C'){ //resting for 30 seconds
           
-           restingForN(30);
+           restingForN(20);
            
        }else if(command == 'D'){ //resting for 1 min
         
-              restingForN(60);
+              restingForN(40);
            
         }else if(command == 'E'){ //resting for 2 min
           
-             restingForN(120);
+             restingForN(60);
                
         } else if(command == 'F'){ //earlydepo for 10 seconds
             
@@ -295,15 +295,15 @@ void commandLight(){
             
         }else if(command == 'G'){ //earlydepo for 30 seconds 
           
-             earlyDepoForN(30);
+             earlyDepoForN(20);
              
         }else if(command == 'H'){ //early depo for 1 min
           
-            earlyDepoForN(60); 
+            earlyDepoForN(40); 
             
         }else if(command =='I'){ //early depo for 2 min
           
-            earlyDepoForN(120);
+            earlyDepoForN(60);
             
         }else if(command == 'J'){ //late depo for 10 seconds
 
@@ -311,15 +311,15 @@ void commandLight(){
             
         }else if(command == 'K'){ //late depo for 30 seconds
 
-             lateDepoForN(30); 
+             lateDepoForN(20); 
              
         }else if(command == 'L'){ //late depo for 60 seconds 
 
-            lateDepoForN(60); 
+            lateDepoForN(40); 
             
         }else if(command == 'M'){ //late depo for 120 seconds 
           
-          lateDepoForN(120);
+          lateDepoForN(60);
           
         }else if(command == 'N'){ //repo for 10 seconds
           
@@ -327,15 +327,15 @@ void commandLight(){
           
         }else if(command == 'O'){ //repo for 30 seconds
           
-          repoForN(30); 
+          repoForN(20); 
           
         }else if(command == 'P'){ //repo for 60 seconds
           
-          repoForN(60); 
+          repoForN(40); 
           
         }else if(command == 'Q'){ //repo for 120 seconds 
           
-          repoForN(120); 
+          repoForN(60); 
           
         }else if(command == 'R'){ //hyper for 10 seconds
           
@@ -343,15 +343,15 @@ void commandLight(){
           
         }else if(command == 'S'){ //hyper for 30 seconds 
           
-          hypForN(30); 
+          hypForN(20); 
           
         }else if(command == 'T'){ //hyper for 60 seconds 
           
-          hypForN(60); 
+          hypForN(40); 
           
         }else if(command == 'U'){ //hyper for 120 seconds
           
-          hypForN(120); 
+          hypForN(60); 
           
           }
     offStrip();
@@ -439,12 +439,16 @@ void hyperpolarizationStrip(){
 void Particles(CRGBPalette16 pal1,CRGBPalette16 pal2){
    EVERY_N_MILLISECONDS(20) {
     //Switch on an LED at random, choosing a random color from the palette
-    partLeds[random8(0, NUM_LEDS - 50)] = ColorFromPalette(pal1, random8(), 255, LINEARBLEND);
+    int rando1 = random8(0, NUM_LEDS - 50);
+    partLeds[rando1] = ColorFromPalette(pal1, random8(), 255, LINEARBLEND);
+    leds[rando1] = ColorFromPalette(pal1, random8(), 255, LINEARBLEND);
   }
 
   EVERY_N_MILLISECONDS(20) {
+    int rando2 = random8(51, NUM_LEDS); 
     //Switch on an LED at random, choosing a random color from the palette
-    partLeds[random8(51, NUM_LEDS)] = ColorFromPalette(pal2, random8(), 255, LINEARBLEND);
+    partLeds[rando2] = ColorFromPalette(pal2, random8(), 255, LINEARBLEND);
+    leds[rando2] = ColorFromPalette(pal2, random8(), 255, LINEARBLEND);
   }
 
   // Fade all LEDs down by 1 in brightness each time this is called
